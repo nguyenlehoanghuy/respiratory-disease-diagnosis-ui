@@ -14,6 +14,18 @@ export const api = {
     }
   },
 
+  fetchRelatedSymptoms: async (symptomId: string) => {
+    try {
+      const response = await axios.get(
+        `${API_BASE_URL}/api/symptoms/${symptomId}/related`
+      );
+      return response.data.symptoms; // Updated to match the backend response structure
+    } catch (error) {
+      console.error("Failed to fetch related symptoms", error);
+      throw error;
+    }
+  },
+
   diagnose: async (symptoms: string[]) => {
     try {
       const response = await axios.post(`${API_BASE_URL}/api/diagnose`, {

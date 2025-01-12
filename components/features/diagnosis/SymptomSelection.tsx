@@ -1,26 +1,53 @@
 import React from "react";
 
-interface SymptomSelectionProps {
-  symptoms: any[];  // Mảng triệu chứng có thể có cấu trúc { id: string, label: string }
-  selectedSymptoms: string[];  // Mảng chứa các symptom id đã chọn
-  handleSelectSymptom: (symptomId: string) => void;  // Hàm xử lý chọn triệu chứng, nhận vào symptom id
+interface Symptom {
+  id: string;
+  label: string;
 }
 
-const SymptomSelection: React.FC<SymptomSelectionProps> = ({ symptoms, selectedSymptoms, handleSelectSymptom }) => {
+interface SymptomSelectionProps {
+  symptoms: Symptom[];
+  selectedSymptoms: string[];
+  handleSelectSymptom: (symptomId: string) => void;
+  isInitialView: boolean;
+  handleShowAllSymptoms: () => void;
+  allSymptoms: Symptom[];
+}
+
+const SymptomSelection: React.FC<SymptomSelectionProps> = ({
+  symptoms,
+  selectedSymptoms,
+  handleSelectSymptom,
+  isInitialView,
+  handleShowAllSymptoms,
+  allSymptoms
+}) => {
   return (
     <div style={styles.container}>
       <h3 style={styles.heading}>Choose Symptoms</h3>
+      
+      {!isInitialView && (
+        <button 
+          onClick={handleShowAllSymptoms}
+          style={styles.showAllButton}
+        >
+          Show All Symptoms
+        </button>
+      )}
+
       <div style={styles.buttonContainer}>
         {symptoms.map((symptom) => (
           <button
-            key={symptom.id}  // Dùng id làm key để tránh lỗi khi có triệu chứng trùng lặp
-            onClick={() => handleSelectSymptom(symptom.id)}  // Truyền id của triệu chứng khi chọn
+            key={symptom.id}
+            onClick={() => handleSelectSymptom(symptom.id)}
             style={{
               ...styles.button,
-              backgroundColor: selectedSymptoms.includes(symptom.id) ? "#FF5733" : "#4CAF50",  // Nếu triệu chứng đã chọn thì đổi màu
+              backgroundColor: selectedSymptoms.includes(symptom.id)
+                ? "#FF5733"
+                : "#4CAF50",
             }}
           >
-            {symptom.label}  {/* Hiển thị label của triệu chứng */}
+            {symptom.label}
           </button>
         ))}
       </div>
@@ -30,7 +57,7 @@ const SymptomSelection: React.FC<SymptomSelectionProps> = ({ symptoms, selectedS
           <h4 style={styles.selectedHeading}>Selected Symptoms:</h4>
           <div style={styles.selectedList}>
             {selectedSymptoms.map((symptomId, index) => {
-              const symptom = symptoms.find((s) => s.id === symptomId);
+              const symptom = allSymptoms.find((s) => s.id === symptomId);
               return symptom ? (
                 <div key={index} style={styles.selectedItem}>
                   {symptom.label}
@@ -54,7 +81,7 @@ const styles = {
     boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
   },
   heading: {
-    textAlign: "center",
+    textAlign: "center" as const,
     color: "#333",
     fontSize: "24px",
     marginBottom: "20px",
@@ -75,6 +102,17 @@ const styles = {
     transition: "all 0.3s ease-in-out",
     boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
   },
+  showAllButton: {
+    padding: "10px 20px",
+    margin: "0 auto 20px",
+    display: "block",
+    backgroundColor: "#666",
+    color: "#fff",
+    border: "none",
+    borderRadius: "8px",
+    cursor: "pointer",
+    fontSize: "16px",
+  },
   selectedSymptomsContainer: {
     marginTop: "30px",
   },
@@ -85,9 +123,9 @@ const styles = {
   },
   selectedList: {
     display: "flex",
-    flexWrap: "wrap",  // Cho phép các thẻ triệu chứng đã chọn chuyển sang dòng mới khi hết chỗ
-    gap: "10px",  // Khoảng cách giữa các thẻ triệu chứng
-    justifyContent: "center",  // Căn giữa các thẻ triệu chứng
+    flexWrap: "wrap" as const,
+    gap: "10px",
+    justifyContent: "center",
   },
   selectedItem: {
     backgroundColor: "#f2f2f2",
